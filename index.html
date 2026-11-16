@@ -336,10 +336,10 @@ body::after{
   .nav__links{font-size:.8rem}
   .nav__links .hide-sm{display:none}
   /* "The new album ♱ November 24" on one line */
-  .drop__what{white-space:nowrap;font-size:clamp(.92rem,4.3vw,1.1rem)}
+  .drop__what{white-space:nowrap;font-size:clamp(.9rem,4.2vw,1.1rem);max-width:100%}
   .drop__what br{display:none}
   .drop__what .hl{margin-top:0}
-  .modal__card h2{white-space:nowrap;font-size:clamp(1rem,5vw,1.35rem)}
+  .modal__card h2{white-space:nowrap;font-size:clamp(.95rem,4.8vw,1.3rem);max-width:100%}
   /* records: swipe sideways through the stack (no long scroll), arrows either side of the title */
   .rail{display:none}
   .flip{display:flex;justify-content:space-between;align-items:center;position:absolute;z-index:3;left:var(--pad);right:var(--pad);bottom:calc(1.5rem + var(--safe-b));pointer-events:none;transition:opacity .25s ease}
@@ -725,13 +725,26 @@ const BIT_APP_ID = 'e721847ab015b76737ca527e8759e900', BIT_ARTIST = 'id_527632';
     });
   });
 
+  // one-line headings ("The new album ♱ November 24"): shrink the type until the line fits the screen
+  const fitLine = el => {
+    if (!el || !el.offsetParent) return;
+    el.style.fontSize = '';
+    const box = el.parentElement, cs = getComputedStyle(box);
+    const avail = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    let size = parseFloat(getComputedStyle(el).fontSize), guard = 40;
+    while (el.scrollWidth > avail && size > 10 && guard--) { size -= .5; el.style.fontSize = size + 'px'; }
+  };
+  const fitAll = () => { if (innerWidth < 761) { fitLine(document.querySelector('.drop__what')); fitLine(document.getElementById('joinTitle')); } else { document.querySelectorAll('.drop__what,#joinTitle').forEach(e => e.style.fontSize = ''); } };
+  addEventListener('resize', fitAll);
+  fitAll(); setTimeout(fitAll, 700); setTimeout(fitAll, 2500);   // again once the display font has loaded
+
   // the pop-up: 5 s after load, once per visit, never for people who already signed up; and from every Sign Up button
   const modal = document.getElementById('joinModal');
   document.getElementById('joinDate').textContent = document.querySelector('.drop__what .hl')?.textContent || '';
   let lastFocus = null;
   const open = () => {
     lastFocus = document.activeElement;
-    modal.hidden = false; requestAnimationFrame(() => modal.classList.add('open'));
+    modal.hidden = false; fitAll(); requestAnimationFrame(() => modal.classList.add('open'));
     setTimeout(() => modal.querySelector('input')?.focus({ preventScroll: true }), 150);
   };
   const close = () => { modal.classList.remove('open'); setTimeout(() => { modal.hidden = true; lastFocus?.focus?.(); }, 250); };
