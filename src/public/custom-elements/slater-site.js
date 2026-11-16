@@ -10,10 +10,6 @@
 const BASE = 'https://raw.githubusercontent.com/rodrilavez/slater-site/main/';
 const THREE_URL = 'https://cdn.jsdelivr.net/npm/three@0.160.0/+esm';
 const ROOM_URL  = 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/environments/RoomEnvironment.js/+esm';
-const LAYLO = {
-  id: '3e9e4154-9fed-4e8a-9d0a-97d71f56738c', minimal: false, customCTA: "", submitButtonText: "",
-  color: 'b6bdce', theme: 'light', background: '', fullWidth: false
-};
 
 /* ---------- turn index.html into pieces that run inside a shadow root ---------- */
 function between(src, a, b) {
@@ -87,24 +83,36 @@ function loadThree() {
   });
   return window.__slaterThreeP;
 }
-function loadLaylo() {
-  headOnce('slater-laylo-sdk', () => {
-    const s = document.createElement('script');
-    s.src = 'https://embed.laylo.com/laylo-sdk.js';
-    s.onload = () => {
-      // the SDK declares `const laylo` as a global binding; expose an opener and show the pop-up after 5 s
-      const boot = document.createElement('script');
-      boot.textContent = "window.__layloOpen = function(o){ laylo.openPopup(o); }; window.__layloOpen(" + JSON.stringify(Object.assign({}, LAYLO, { secondsToWait: 5 })) + ");";
-      document.head.appendChild(boot);
-    };
-    return s;
-  });
-}
-
 class SlaterSite extends HTMLElement {
+  static get observedAttributes() { return ['signup-result', 'dice-event']; }
+
+  /* sign-up bridge: the site's form calls window.__slaterSignup({email}|{phone});
+     we raise a 'signup' event that the page code (src/pages/Home.*.js) passes to the backend,
+     and the page code answers by setting the 'signup-result' attribute on this element. */
+  signup(payload) {
+    const id = Math.random().toString(36).slice(2);
+    return new Promise(resolve => {
+      const timer = setTimeout(() => { delete this._pending[id]; resolve({ ok: false, error: 'timeout' }); }, 15000);
+      this._pending[id] = res => { clearTimeout(timer); resolve(res); };
+      this.dispatchEvent(new CustomEvent('signup', { detail: Object.assign({ id }, payload) }));
+    });
+  }
+  attributeChangedCallback(name, _old, value) {
+    if (!value) return;
+    if (name === 'dice-event') {
+      // DICE event details from the page code; the Tour card picks them up now or when the site finishes loading
+      try { window.__slaterDice = JSON.parse(value); window.dispatchEvent(new CustomEvent('slater:dice', { detail: window.__slaterDice })); } catch (_) {}
+      return;
+    }
+    if (name !== 'signup-result') return;
+    try { const r = JSON.parse(value); const done = this._pending && this._pending[r.id]; if (done) { delete this._pending[r.id]; done(r); } } catch (_) {}
+  }
+
   connectedCallback() {
     if (this._mounted) return;
     this._mounted = true;
+    this._pending = this._pending || {};
+    window.__slaterSignup = payload => this.signup(payload);
     this.style.display = 'block';
 
     headOnce('slater-fonts', () => {
@@ -120,6 +128,7 @@ class SlaterSite extends HTMLElement {
     document.body.appendChild(host);
     this._host = host;
     const root = host.attachShadow({ mode: 'open' });
+    root.innerHTML = '<style>@keyframes p{50%{opacity:.45}}</style><img src="' + BASE + 'assets/slater-scratch.png" alt="" style="position:absolute;left:50%;top:50%;width:min(60vw,320px);transform:translate(-50%,-50%);filter:brightness(1.7) drop-shadow(0 0 14px rgba(237,229,211,.35));animation:p 1.4s ease-in-out infinite">';
     this._prevOverflow = [document.documentElement.style.overflow, document.body.style.overflow];
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
@@ -143,14 +152,6 @@ class SlaterSite extends HTMLElement {
           scroller.scrollTo({ top: t.offsetTop, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
         });
 
-        // sign-up buttons open the Laylo pop-up when it has loaded, otherwise they open laylo.com
-        loadLaylo();
-        root.querySelectorAll('[data-laylo]').forEach(a => a.addEventListener('click', e => {
-          if (typeof window.__layloOpen !== 'function') return;
-          e.preventDefault();
-          window.__layloOpen(Object.assign({}, LAYLO, { secondsToWait: 0 }));
-        }, true));
-
         return three.then(({ THREE, RoomEnvironment }) => {
           const run = new Function('THREE', 'RoomEnvironment', 'root', 'scroller', 'BASE', p.js);
           run(THREE, RoomEnvironment, root, scroller, BASE);
@@ -163,6 +164,7 @@ class SlaterSite extends HTMLElement {
   }
 
   disconnectedCallback() {
+    if (window.__slaterSignup) delete window.__slaterSignup;
     if (this._host) { this._host.remove(); this._host = null; }
     if (this._prevOverflow) {
       document.documentElement.style.overflow = this._prevOverflow[0];

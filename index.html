@@ -221,6 +221,15 @@ body::after{
 .pickup__spin{position:absolute;inset:0;transform-style:preserve-3d;animation:spin var(--spin,7s) linear infinite;animation-delay:var(--d,0s)}
 .pickup__spin img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;backface-visibility:visible}
 .pickup__spin img.l{filter:brightness(.42)}
+/* phones: no blur layers, no blended moving grain, thinner merch pickups — the main sources of scroll jank */
+@media (max-width:760px), (pointer:coarse){
+  .scroller::after, body::after{animation:none;mix-blend-mode:normal;opacity:.07;inset:0}
+  .nav.solid{background:rgba(31,26,21,.96);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .sheet{background:rgba(22,18,14,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .pickup__spin img.l{display:none}
+  .pickup::before{filter:none}
+  .runway__track{will-change:transform}
+}
 .pickup__shadow{position:absolute;left:30%;right:30%;bottom:6%;height:7%;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.55),rgba(0,0,0,0));animation:shadow 2.8s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
 @keyframes spin{to{transform:rotateY(360deg)}}
 @keyframes bob{from{transform:translateY(-4%)}to{transform:translateY(4%)}}
@@ -244,6 +253,69 @@ body::after{
   .runway{overflow-x:auto;-webkit-mask-image:none;mask-image:none}
   .runway__track{animation:none}
   .pickup__spin,.pickup__float,.pickup__shadow{animation:none}
+}
+
+
+/* ---------------- tour ---------------- */
+.tour{padding:clamp(4rem,12vh,7rem) var(--pad)}
+.tour__head{display:flex;align-items:end;justify-content:space-between;gap:1rem 2rem;flex-wrap:wrap;margin-bottom:clamp(1.5rem,4vh,2.5rem)}
+.tour__head h2{font-size:clamp(2.6rem,7vw,6rem);line-height:.95}
+.shows{list-style:none;border-top:1px solid rgba(237,229,211,.14)}
+.show{display:grid;grid-template-columns:7.5rem 1fr auto;align-items:center;gap:.5rem 1.5rem;padding:1.1rem 0;border-bottom:1px solid rgba(237,229,211,.14)}
+.show__date{font-variant-numeric:tabular-nums;line-height:1.05}
+.show__date b{display:block;font-size:1.5rem;white-space:nowrap}
+.show__date span{white-space:nowrap}
+.show__date span{font-size:.85rem;opacity:.7}
+.show__where b{display:block;font-size:clamp(1.1rem,1.8vw,1.4rem);line-height:1.1}
+.show__where span{font-size:.9rem;opacity:.75}
+.show__cta{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end}
+.shows__msg{padding:1.6rem 0;opacity:.8;max-width:46ch}
+.show:not(.is-live) [data-dice]{opacity:.55;letter-spacing:.08em}
+.shows__empty{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem 2rem;padding:1.6rem 0}
+.shows__empty p{max-width:42ch;opacity:.85}
+.shows__empty b{display:block;font-size:clamp(1.3rem,2.4vw,1.8rem);margin-bottom:.35rem;opacity:1}
+
+/* ---------------- sign-up form (ours, posts to Laylo through the site backend) ---------------- */
+.join{display:grid;grid-template-columns:minmax(0,1fr);gap:.6rem;max-width:26rem;min-width:0}
+.join__tabs{display:flex;gap:.2rem;font-size:.9rem}
+.join__tabs button{background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:.3rem .45rem;opacity:.6}
+.join__tabs button[aria-pressed="true"]{opacity:1;background:var(--sand);color:var(--ink)}
+.join__row{display:flex;gap:.4rem}
+.join input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--sand);background:rgba(237,229,211,.06);border:0;border-radius:0;
+  box-shadow:inset 0 0 0 1.5px rgba(237,229,211,.35);padding:.8rem .9rem;outline:none;transition:box-shadow .2s ease}
+.join input::placeholder{color:rgba(237,229,211,.45)}
+.join input:focus{box-shadow:inset 0 0 0 1.5px var(--sun)}
+.join button[type=submit]{flex:none}
+.join button[type=submit][disabled]{opacity:.6;cursor:progress}
+.join__msg{font-size:.88rem;min-height:1.2em}
+.join__msg.ok{color:var(--sun)}
+.join__msg.err{color:#f0a48f}
+.join__fine{font-size:.72rem;line-height:1.45;opacity:.55}
+.join__fine a{text-decoration:underline;text-underline-offset:.2em}
+.band--blue .join input{color:var(--ink);background:rgba(22,18,14,.06);box-shadow:inset 0 0 0 1.5px rgba(22,18,14,.4)}
+
+.modal{position:fixed;inset:0;z-index:70;display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:1rem;background:rgba(15,12,9,.72);
+  opacity:0;transition:opacity .25s ease}
+.modal.open{opacity:1}
+.modal[hidden]{display:none}
+.modal__card{position:relative;width:min(420px,100%);min-width:0;max-width:100%;padding:1.6rem 1.4rem 1.3rem;background:var(--tide);background-image:var(--noise);
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.8),inset 0 0 0 1px rgba(237,229,211,.14);transform:translateY(12px) scale(.98);transition:transform .35s var(--ease-out)}
+.modal.open .modal__card{transform:none}
+.modal__logo{width:150px;height:auto;margin-bottom:.9rem;filter:brightness(1.7) drop-shadow(0 0 10px rgba(237,229,211,.3))}
+.modal__card h2{font-size:clamp(1.4rem,5vw,1.8rem);line-height:1.1;margin-bottom:.5rem}
+.modal__card > p{font-size:.92rem;opacity:.8;margin-bottom:1rem}
+.modal__close{position:absolute;top:.6rem;right:.6rem;width:2.2rem;height:2.2rem;display:grid;place-items:center;background:none;border:0;color:var(--sand);cursor:pointer;opacity:.7}
+.modal__close:hover{opacity:1}
+
+@media (max-width:760px){
+  .tour__head{flex-direction:column;align-items:center;text-align:center}
+  .show{grid-template-columns:auto 1fr;gap:.5rem 1.2rem;text-align:left}
+  .show__cta{grid-column:1 / -1;justify-content:flex-start}
+  .shows__empty{flex-direction:column;text-align:center}
+  .join{margin:0 auto}
+  .join__tabs{justify-content:center}
+  .modal{align-items:end;padding:0}
+  .modal__card{width:100%;padding-bottom:calc(1.3rem + var(--safe-b))}
 }
 
 /* ---------------- phones ---------------- */
@@ -291,6 +363,8 @@ body::after{
     <li><a class="sweep" href="#records">Music</a></li>
     <li class="hide-sm" aria-hidden="true"><span class="x">♱</span></li>
     <li class="hide-sm"><a class="sweep" href="#merch">Shop</a></li>
+    <li aria-hidden="true"><span class="x">♱</span></li>
+    <li><a class="sweep" href="#tour">Tour</a></li>
     <li aria-hidden="true"><span class="x">♱</span></li>
     <li><a class="hl" data-laylo href="https://laylo.com/slatervv" target="_blank" rel="noopener">Sign Up</a></li>
   </ul>
@@ -353,6 +427,19 @@ body::after{
   </div>
 </section>
 
+<section class="tour" id="tour" aria-labelledby="tourTitle">
+  <div class="tour__head">
+    <h2 class="disp" id="tourTitle">Tour</h2>
+  </div>
+  <ol class="shows" id="shows" aria-live="polite">
+    <li class="show" id="diceShow">
+      <p class="show__date disp"><b data-dice="day">???</b><span data-dice="sub">???????</span></p>
+      <p class="show__where"><b class="disp" data-dice="place">???????????</b><span data-dice="venue">???????????</span></p>
+      <p class="show__cta"><a class="btn disp" id="diceTix" href="https://dice.fm/partner/tickets/event/ok2nqa?dice_id=11084778&amp;dice_channel=web&amp;dice_tags=organic&amp;dice_campaign=Crunchy+Crunchy+LLC&amp;dice_feature=mio_marketing&amp;utm_source=web&amp;utm_campaign=Crunchy+Crunchy+LLC&amp;utm_medium=mio_marketing&amp;lng=en-US" target="_blank" rel="noopener">Tickets</a></p>
+    </li>
+  </ol>
+</section>
+
 <section class="merch" id="merch" aria-labelledby="merchTitle">
   <div class="merch__head">
     <h2 class="disp" id="merchTitle">Merch</h2>
@@ -369,13 +456,23 @@ body::after{
   </div>
 </section>
 
-<section class="band">
+<section class="band" id="join">
   <h2 class="disp">Hear it first</h2>
   <div class="band__side">
     <p>New songs, tour dates and the album pre-save go to this list before anywhere else.</p>
-    <a class="btn disp" data-laylo href="https://laylo.com/slatervv" target="_blank" rel="noopener">Sign up for updates</a>
+    <form class="join" data-signup novalidate></form>
   </div>
 </section>
+
+<div class="modal" id="joinModal" role="dialog" aria-modal="true" aria-labelledby="joinTitle" hidden>
+  <div class="modal__card">
+    <button class="modal__close" type="button" aria-label="Close" data-close><svg width="14" height="14" viewBox="0 0 18 18" aria-hidden="true"><path d="M3 3l12 12M15 3L3 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+    <img class="modal__logo" src="assets/slater-scratch.png" alt="" width="607" height="107">
+    <h2 class="disp" id="joinTitle">The new album <span class="x" aria-hidden="true">♱</span> <span class="hl" id="joinDate">November 24</span></h2>
+    <p>Get a text or an email the second it's out, plus first word on shows and merch drops.</p>
+    <form class="join" data-signup novalidate></form>
+  </div>
+</div>
 
 <div class="bears-wrap"><img class="bears" src="assets/ca-bears.png" alt="" width="1400" height="297" loading="lazy"></div>
 <footer class="foot">
@@ -394,34 +491,7 @@ body::after{
 </footer>
 
 
-<!-- Laylo sign-up pop-up: management's embed, opens 5 s after load and from every "Sign up" button -->
-<script src="https://embed.laylo.com/laylo-sdk.js"></script>
-<script>
-  const LAYLO = {
-    id: '3e9e4154-9fed-4e8a-9d0a-97d71f56738c',
-    minimal: false,
-    customCTA: "",
-    submitButtonText: "",
-    color: 'b6bdce',
-    theme: 'light',
-    background: '',
-    fullWidth: false
-  };
-  // the SDK declares `const laylo` (a global binding, not window.laylo)
-  const layloReady = () => typeof laylo !== 'undefined' && typeof laylo.openPopup === 'function';
-  if (layloReady()) {
-    laylo.openPopup({ ...LAYLO, secondsToWait: 5 });
-  } else {
-    console.warn('Laylo SDK did not load — the sign-up buttons will open laylo.com instead.');
-  }
-  // bound on each button, in the capture phase, so nothing else can follow the link first
-  const openLaylo = e => {
-    if (!layloReady()) return;
-    e.preventDefault(); e.stopPropagation();
-    laylo.openPopup({ ...LAYLO, secondsToWait: 0 });
-  };
-  document.querySelectorAll('[data-laylo]').forEach(a => a.addEventListener('click', openLaylo, true));
-</script>
+<!-- Laylo sign-up pop-up: our own form now (see "sign-up" in the module script). This marker must stay. -->
 
 <script type="importmap">
 { "imports": {
@@ -507,6 +577,114 @@ const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('solid', scrollY > innerHeight*.6),{passive:true});
 
 
+
+/* ================= tour (one DICE event) =================
+   The card shows ??? until the DICE page is live. On Wix, the site backend (src/backend/dice.web.js)
+   reads the event's details from DICE and hands them over through the custom element (window.__slaterDice). */
+{
+  const card = document.getElementById('diceShow');
+  const set = (k, v) => { const el = card.querySelector(`[data-dice="${k}"]`); if (el && v) el.textContent = v; };
+  const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fill = ev => {
+    if (!ev || !ev.live) return;
+    const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(ev.startDate || '');
+    if (m) {
+      // read the date as written (venue's local time), not converted to the visitor's time zone
+      const d = new Date(Date.UTC(+m[1], +m[2]-1, +m[3]));
+      const wk = d.toLocaleDateString('en-US', {weekday:'short', timeZone:'UTC'});
+      let time = '';
+      if (m[4]) { const h = +m[4]; time = ` · ${(h % 12) || 12}${m[5] !== '00' ? ':'+m[5] : ''}${h < 12 ? 'am' : 'pm'}`; }
+      set('day', `${M[+m[2]-1]} ${+m[3]}`);
+      set('sub', `${wk} ${m[1]}${time}`);
+    }
+    set('place', [ev.city, ev.region].filter(Boolean).join(', ') || ev.name);
+    set('venue', ev.venue);
+    card.classList.add('is-live');
+  };
+  fill(window.__slaterDice);
+  addEventListener('slater:dice', e => fill(e.detail));
+}
+
+/* ================= sign-up (our design, posts to Laylo) =================
+   On Wix the request goes through the site's backend (src/backend/laylo.web.js), which holds the Laylo key.
+   Anywhere else (no backend), the form sends people to laylo.com/slatervv instead. */
+{
+  const LAYLO_PAGE = 'https://laylo.com/slatervv';
+  const formHTML = `
+    <div class="join__tabs disp" role="group" aria-label="How do you want to hear from Slater">
+      <button type="button" data-kind="phone" aria-pressed="true">Text</button><button type="button" data-kind="email" aria-pressed="false">Email</button>
+    </div>
+    <div class="join__row">
+      <input name="contact" type="tel" inputmode="tel" autocomplete="tel" placeholder="+1 555 555 5555" aria-label="Phone number" required>
+      <button class="btn disp" type="submit">Sign Up</button>
+    </div>
+    <p class="join__msg" role="status"></p>
+    <p class="join__fine">By signing up you agree to receive messages from Slater via Laylo. Msg &amp; data rates may apply. Reply STOP to opt out.
+      <a href="https://docs.laylo.com/en/articles/6497431-terms-of-service" target="_blank" rel="noopener">Terms</a> &amp;
+      <a href="https://docs.laylo.com/en/articles/6497219-privacy-and-gdpr-policy" target="_blank" rel="noopener">Privacy</a>.</p>`;
+
+  const normPhone = v => {
+    let d = v.replace(/[^\d+]/g, '');
+    if (!d.startsWith('+')) d = (d.length === 10 ? '+1' : '+') + d;   // 10 digits with no country code: assume US
+    return /^\+\d{8,15}$/.test(d) ? d : null;
+  };
+  const okEmail = v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
+
+  document.querySelectorAll('[data-signup]').forEach(form => {
+    form.innerHTML = formHTML;
+    let kind = 'phone';
+    const input = form.querySelector('input'), msg = form.querySelector('.join__msg'), btn = form.querySelector('[type=submit]');
+    form.querySelectorAll('.join__tabs button').forEach(b => b.addEventListener('click', () => {
+      kind = b.dataset.kind;
+      form.querySelectorAll('.join__tabs button').forEach(x => x.setAttribute('aria-pressed', x === b));
+      Object.assign(input, kind === 'phone'
+        ? { type:'tel', inputMode:'tel', autocomplete:'tel', placeholder:'+1 555 555 5555' }
+        : { type:'email', inputMode:'email', autocomplete:'email', placeholder:'you@email.com' });
+      input.setAttribute('aria-label', kind === 'phone' ? 'Phone number' : 'Email');
+      input.value = ''; msg.textContent = ''; msg.className = 'join__msg'; input.focus();
+    }));
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const v = input.value.trim();
+      const payload = kind === 'phone' ? { phone: normPhone(v) } : { email: okEmail(v) ? v : null };
+      if (!payload.phone && !payload.email) {
+        msg.className = 'join__msg err';
+        msg.textContent = kind === 'phone' ? 'Enter your number with the country code, like +1 555 555 5555.' : 'Enter a valid email, like you@email.com.';
+        input.focus(); return;
+      }
+      if (typeof window.__slaterSignup !== 'function') { window.open(LAYLO_PAGE, '_blank', 'noopener'); return; }
+      btn.disabled = true; msg.className = 'join__msg'; msg.textContent = 'Signing you up…';
+      try {
+        const res = await window.__slaterSignup(payload);
+        if (!res || !res.ok) throw new Error(res && res.error || 'failed');
+        msg.className = 'join__msg ok';
+        msg.textContent = kind === 'phone' ? "You're in. Check your texts." : "You're in. Check your inbox.";
+        input.value = '';
+        try { localStorage.setItem('slater-joined', '1'); } catch (_) {}
+      } catch (err) {
+        msg.className = 'join__msg err';
+        msg.innerHTML = `Couldn't sign you up right now. <a href="${LAYLO_PAGE}" target="_blank" rel="noopener">Try on Laylo</a>.`;
+      } finally { btn.disabled = false; }
+    });
+  });
+
+  // the pop-up: 5 s after load, once per visit, never for people who already signed up; and from every Sign Up button
+  const modal = document.getElementById('joinModal');
+  document.getElementById('joinDate').textContent = document.querySelector('.drop__what .hl')?.textContent || '';
+  let lastFocus = null;
+  const open = () => {
+    lastFocus = document.activeElement;
+    modal.hidden = false; requestAnimationFrame(() => modal.classList.add('open'));
+    setTimeout(() => modal.querySelector('input')?.focus({ preventScroll: true }), 150);
+  };
+  const close = () => { modal.classList.remove('open'); setTimeout(() => { modal.hidden = true; lastFocus?.focus?.(); }, 250); };
+  modal.addEventListener('click', e => { if (e.target === modal || e.target.closest('[data-close]')) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) close(); });
+  document.querySelectorAll('[data-laylo], [data-open-join]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); open(); }, true));
+  let seen = false; try { seen = sessionStorage.getItem('slater-popup') || localStorage.getItem('slater-joined'); } catch (_) {}
+  if (!seen) setTimeout(() => { if (modal.hidden) { open(); try { sessionStorage.setItem('slater-popup', '1'); } catch (_) {} } }, 5000);
+}
+
 /* ================= merch runway ================= */
 {
   const BC='https://slatervadavada.bigcartel.com/', LR='https://lagoonroommerch.com/collections/slater';
@@ -517,7 +695,7 @@ addEventListener('scroll',()=>nav.classList.toggle('solid', scrollY > innerHeigh
     ['m09','Graffiti Star Black Tee','$32',LR],['m14','ESI 2 Vinyl','$30',LR,1],['m02','Cali Swag 3ra T','$32',BC],
     ['m13','ESI 2 CD','$20',LR,1],['m11','Graffiti Star White Lighter','$25',LR,1],
   ];
-  const LAYERS=[-4,-2.5,-1,1,2.5,4];   // px of "thickness" behind the face
+  const LAYERS = (matchMedia('(pointer:coarse)').matches || innerWidth<760) ? [] : [-4,-2.5,-1,1,2.5,4];   // px of "thickness" behind the face (desktop only)
   const card=([img,name,price,url,sold],i,dup)=>`<li class="piece"${dup?' aria-hidden="true"':''}><a href="${url}" target="_blank" rel="noopener"${dup?' tabindex="-1"':''}>
     <div class="pickup" style="--d:-${(i*0.73)%2.8}s;--spin:${6+(i%4)}s">
       <div class="pickup__float"><div class="pickup__spin">
@@ -542,8 +720,9 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas = document.getElementById('gl');
 const stage = document.getElementById('stage');
 const section = document.getElementById('records');
-const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true, powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth<760 ? 1.5 : 2));
+const TOUCH = matchMedia('(pointer:coarse)').matches || innerWidth<760;
+const renderer = new THREE.WebGLRenderer({canvas, antialias:!TOUCH, alpha:true, powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio, TOUCH ? 1.25 : 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.05;
@@ -566,7 +745,7 @@ const discSideMat = new THREE.MeshStandardMaterial({color:'#050505', roughness:.
 const rand = n => { const x=Math.sin(n*127.1+311.7)*43758.5453; return x-Math.floor(x); };
 
 /* ---------- a lived-in copy: ring wear, soft edges, a store sticker on some ---------- */
-const COVER_PX = innerWidth<760 ? 512 : 768;
+const COVER_PX = TOUCH ? 384 : 768;
 const noise = document.createElement('canvas'); noise.width=noise.height=128;
 { const g=noise.getContext('2d'), d=g.createImageData(128,128);
   for(let i=0;i<d.data.length;i+=4){ const v=Math.random()*255; d.data[i]=d.data[i+1]=d.data[i+2]=v; d.data[i+3]=255; }

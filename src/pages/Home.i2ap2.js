@@ -1,10 +1,26 @@
-// API Reference: https://www.wix.com/velo/reference/api-overview/introduction
-// “Hello, World!” Example: https://learn-code.wix.com/en/article/hello-world
+// Home page code.
+// The Slater site (custom element #customElement1) raises a 'signup' event when a fan submits the form.
+// We pass it to the backend, which talks to Laylo, and hand the answer back to the element.
+// We also ask the backend for the DICE event details and hand them to the element for the Tour card.
+
+import { subscribeFan } from 'backend/laylo.web';
+import { getDiceEvent } from 'backend/dice.web';
 
 $w.onReady(function () {
-    // Write your JavaScript here
+    const site = $w('#customElement1');
 
-    // To select an element by ID use: $w('#elementID')
+    site.on('signup', async (event) => {
+        const { id, email, phone } = event.detail || {};
+        let result = { id, ok: false };
+        try {
+            result = Object.assign({ id }, await subscribeFan(email, phone));
+        } catch (err) {
+            result.error = 'backend';
+        }
+        site.setAttribute('signup-result', JSON.stringify(result));
+    });
 
-    // Click 'Preview' to run your code
+    getDiceEvent()
+        .then((ev) => { if (ev && ev.live) site.setAttribute('dice-event', JSON.stringify(ev)); })
+        .catch(() => {});
 });
