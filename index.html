@@ -71,7 +71,7 @@ body::after{
 .nav__logo{width:112px;height:auto;filter:brightness(1.7) drop-shadow(0 0 8px rgba(237,229,211,.35));opacity:0;transform:translateY(-6px);transition:opacity .3s ease,transform .4s var(--ease-out)}
 .nav.solid .nav__logo{opacity:1;transform:none}
 .nav__links{display:flex;align-items:center;list-style:none;font-size:1rem}
-.nav__links a{text-decoration:none;display:inline-block;padding:.35rem .1rem}
+.nav__links a{text-decoration:none;display:inline-block;padding:.35rem .1rem;white-space:nowrap}
 /* hover: the site's highlight block slides in behind the word */
 .sweep{position:relative;isolation:isolate;padding:.15rem .4rem !important;transition:color .18s ease}
 .sweep::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--sand);transform:scaleX(0);transform-origin:left;transition:transform .24s var(--ease-out)}
@@ -170,7 +170,11 @@ body::after{
   .listen:hover{transform:translateY(-2px);background:#fff}
   .sheet__icon:not(:disabled):hover{opacity:1;background:rgba(237,229,211,.08)}
 }
-.stage.is-open .now,.stage.is-open .rail{opacity:0}
+.stage.is-open .now,.stage.is-open .rail,.stage.is-open .flip{opacity:0;pointer-events:none}
+.flip{display:none}
+.flip__btn{width:2.4rem;height:2.4rem;display:grid;place-items:center;background:rgba(31,26,21,.35);border:0;border-radius:50%;
+  box-shadow:inset 0 0 0 1px rgba(237,229,211,.28);color:var(--sand);cursor:pointer;opacity:.75;transition:opacity .2s ease}
+.flip__btn:disabled{opacity:.2;cursor:default}
 
 .stage::before,.stage::after{content:"";position:absolute;left:0;right:0;z-index:1;pointer-events:none}
 @media (max-width:760px){
@@ -309,8 +313,6 @@ body::after{
 
 @media (max-width:760px){
   .tour__head{flex-direction:column;align-items:center;text-align:center}
-  .show{grid-template-columns:auto 1fr;gap:.5rem 1.2rem;text-align:left}
-  .show__cta{grid-column:1 / -1;justify-content:flex-start}
   .shows__empty{flex-direction:column;text-align:center}
   .join{margin:0 auto}
   .join__tabs{justify-content:center}
@@ -331,8 +333,32 @@ body::after{
   .band__side p{margin-left:auto;margin-right:auto}
   .foot{flex-direction:column;justify-content:center}
   .foot ul{justify-content:center}
-  .nav__links{font-size:.92rem}
+  .nav__links{font-size:.8rem}
   .nav__links .hide-sm{display:none}
+  /* "The new album ♱ November 24" on one line */
+  .drop__what{white-space:nowrap;font-size:clamp(.92rem,4.3vw,1.1rem)}
+  .drop__what br{display:none}
+  .drop__what .hl{margin-top:0}
+  .modal__card h2{white-space:nowrap;font-size:clamp(1rem,5vw,1.35rem)}
+  /* records: swipe sideways through the stack (no long scroll), arrows either side of the title */
+  .rail{display:none}
+  .flip{display:flex;justify-content:space-between;align-items:center;position:absolute;z-index:3;left:var(--pad);right:var(--pad);bottom:calc(1.5rem + var(--safe-b));pointer-events:none;transition:opacity .25s ease}
+  .flip__btn{pointer-events:auto}
+  .now{left:calc(var(--pad) + 3rem);right:calc(var(--pad) + 3rem)}
+  #gl{touch-action:pan-y}
+  /* tour: one line per show */
+  .show{display:flex;align-items:center;gap:.7rem;padding:.8rem 0}
+  .show__date{display:flex;flex-direction:column;flex:none;white-space:nowrap}
+  .show__date b{font-size:1rem}
+  .show__date span{font-size:.66rem}
+  .show__where{flex:1;min-width:0;white-space:nowrap}
+  .show__where b{font-size:.9rem;overflow:hidden;text-overflow:ellipsis}
+  .show__where span{display:block;font-size:.72rem;overflow:hidden;text-overflow:ellipsis}
+  .show__cta{flex:none;margin-left:auto}
+  .show__cta .btn{padding:.55rem .75rem;font-size:.8rem}
+  /* merch: both shop buttons on one line */
+  .merch__btns{flex-wrap:nowrap}
+  .merch__btns .btn{padding:.7rem .85rem;font-size:.88rem}
   .nav__logo{width:84px}
   .drop{grid-template-columns:1fr;gap:1rem}
   .count b{font-size:clamp(2.3rem,12vw,3.2rem)}
@@ -360,10 +386,10 @@ body::after{
 <nav class="nav" id="nav" aria-label="Main">
   <a href="#top" aria-label="Slater, back to top"><img class="nav__logo" src="assets/slater-scratch.png" alt="Slater" width="607" height="107"></a>
   <ul class="nav__links disp">
-    <li><a class="sweep" href="#records">Music</a></li>
+    <li class="hide-sm"><a class="sweep" href="#records">Music</a></li>
     <li class="hide-sm" aria-hidden="true"><span class="x">♱</span></li>
     <li class="hide-sm"><a class="sweep" href="#merch">Shop</a></li>
-    <li aria-hidden="true"><span class="x">♱</span></li>
+    <li class="hide-sm" aria-hidden="true"><span class="x">♱</span></li>
     <li><a class="sweep" href="#tour">Tour</a></li>
     <li aria-hidden="true"><span class="x">♱</span></li>
     <li><a class="hl" data-laylo href="https://laylo.com/slatervv" target="_blank" rel="noopener">Sign Up</a></li>
@@ -402,6 +428,10 @@ body::after{
     </div>
 
     <p class="now" id="now" aria-live="polite"></p>
+    <div class="flip" aria-label="Browse records">
+      <button type="button" class="flip__btn" id="flipPrev" aria-label="Newer record"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="flip__btn" id="flipNext" aria-label="Older record"><svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
 
     <div class="rail" id="rail" aria-label="Release years">
       <div class="rail__line"></div><div class="rail__fill" id="fill"></div>
@@ -951,7 +981,7 @@ function apply(jump){
   list = records.filter(r=> mode==='latest' ? LATEST.has(r.item.id) : (kind==='All' || r.item.kind===kind));
   records.forEach(r=>{ r.visible=list.includes(r); });
   list.forEach((r,i)=>{ r.slot=i; r.load(); });
-  section.style.setProperty('--track-h', `${100 + Math.max(1,list.length-1)*(mobile?42:48)}vh`);
+  setTrack(); slotNow=0; updateFlip();
   buildRail(); buildSnaps(); readProgress();
   if(jump) window.scrollTo({top:section.offsetTop, behavior:reduce?'auto':'smooth'});
 }
@@ -961,21 +991,44 @@ document.getElementById('srList').innerHTML = ALL.map(a=>`<li><a href="${a.url}"
 /* ---------- scroll → stack position ---------- */
 let progress=0, smooth=0;
 /* phones: gentle scroll-snap so a flick settles on a record instead of between two */
+const setTrack=()=>section.style.setProperty('--track-h', mobile ? '100svh' : `${100 + Math.max(1,list.length-1)*48}vh`);
+let slotNow=0;   // phones: which record is on top (set by swipes and the arrows)
 function buildSnaps(){
   section.querySelectorAll('.snap').forEach(n=>n.remove());
-  if(!mobile || reduce) return;
+  return;         // phones swipe sideways now, so no scroll snapping
   const total=section.offsetHeight-innerHeight;
   list.forEach((r,i)=>{ const d=document.createElement('div'); d.className='snap'; d.style.top=`${list.length>1 ? i/(list.length-1)*total : 0}px`; section.appendChild(d); });
 }
 function readProgress(){
+  if(mobile){ progress = list.length>1 ? slotNow/(list.length-1) : 0; return; }
   const r=section.getBoundingClientRect(), total=section.offsetHeight-innerHeight;
   progress = total>0 ? Math.min(1,Math.max(0,-r.top/total)) : 0;
 }
 addEventListener('scroll',readProgress,{passive:true});
 function scrollToSlot(i){
+  if(mobile){ slotNow=Math.max(0,Math.min(list.length-1,i)); updateFlip(); return; }
   const total=section.offsetHeight-innerHeight, p = list.length>1 ? i/(list.length-1) : 0;
   window.scrollTo({top: section.offsetTop + p*total, behavior: reduce?'auto':'smooth'});
 }
+const flipPrev=document.getElementById('flipPrev'), flipNext=document.getElementById('flipNext');
+function updateFlip(){ if(!flipPrev) return; flipPrev.disabled = slotNow<=0; flipNext.disabled = slotNow>=list.length-1; }
+flipPrev.onclick=()=>scrollToSlot(slotNow-1);
+flipNext.onclick=()=>scrollToSlot(slotNow+1);
+/* sideways swipe on the stack: left = next (older) record, right = back; a long fast swipe skips up to three */
+{
+  let sx=0, sy=0, st=0, on=false;
+  canvas.addEventListener('touchstart',e=>{ if(!mobile || openIdx!==null) return; const t=e.touches[0]; sx=t.clientX; sy=t.clientY; st=performance.now(); on=true; },{passive:true});
+  canvas.addEventListener('touchend',e=>{
+    if(!on) return; on=false;
+    const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+    if(Math.abs(dx)<36 || Math.abs(dx)<Math.abs(dy)*1.2) return;
+    const fast = Math.abs(dx)/Math.max(1,performance.now()-st) > .9;
+    const n = Math.min(3, Math.max(1, Math.round(Math.abs(dx)/(fast?110:160))));
+    scrollToSlot(slotNow + (dx<0 ? n : -n));
+    swiped = performance.now();
+  },{passive:true});
+}
+let swiped=0;
 const railEl=document.getElementById('rail'), fillEl=document.getElementById('fill');
 function buildRail(){
   railEl.querySelectorAll('.rail__tick').forEach(n=>n.remove());
@@ -998,7 +1051,7 @@ addEventListener('pointermove',e=>{
   if(!drag.moved && Math.abs(dy)>8) drag.moved=true;
   if(drag.moved){ window.scrollBy(0, -dy*2.2); drag.y=e.clientY; }
 });
-addEventListener('pointerup',e=>{ if(drag && e.pointerId===drag.id && !drag.moved && e.target===canvas) pick(e); drag=null; });
+addEventListener('pointerup',e=>{ if(drag && e.pointerId===drag.id && !drag.moved && e.target===canvas && Math.abs(e.clientX-drag.x)<12 && performance.now()-swiped>300) pick(e); drag=null; });
 addEventListener('pointercancel',()=>{ drag=null; });
 
 /* ---------- picking ---------- */
@@ -1063,7 +1116,7 @@ function resize(){
   openDist = Math.max(camDist*.92, ((mobile?1.9:2.4)/camera.aspect)/(2*TAN()));
   scene.fog.near = camDist+.8; scene.fog.far = camDist+6;
 }
-addEventListener('resize',()=>{ resize(); buildSnaps(); readProgress(); });
+addEventListener('resize',()=>{ resize(); setTrack(); updateFlip(); readProgress(); });
 
 /* ---------- loop ---------- */
 const damp=(a,b,k,dt)=>a+(b-a)*(1-Math.exp(-k*dt));
@@ -1119,7 +1172,9 @@ function frame(){
         show = d < 6 ? 1 : Math.max(0, 1-(d-6));
       } else {
         // flipped past: slides up and off the pile
-        const e=-d; tx = r.home.x - e*.3; ty = r.home.y + e*1.6; tz = .03 + e*.05; rz = r.home.rz + e*.35;
+        const e=-d;
+        if(mobile){ tx = r.home.x - e*1.9; ty = r.home.y + e*.12; tz = .03 + e*.05; rz = r.home.rz + e*.22; }
+        else { tx = r.home.x - e*.3; ty = r.home.y + e*1.6; tz = .03 + e*.05; rz = r.home.rz + e*.35; }
         show = Math.max(0, 1-e*1.8);
       }
       if(anyOpen){ tz -= .6; show *= .22; }
