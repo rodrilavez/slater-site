@@ -578,31 +578,58 @@ addEventListener('scroll',()=>nav.classList.toggle('solid', scrollY > innerHeigh
 
 
 
-/* ================= tour (one DICE event) =================
-   The card shows ??? until the DICE page is live. On Wix, the site backend (src/backend/dice.web.js)
-   reads the event's details from DICE and hands them over through the custom element (window.__slaterDice). */
+/* ================= tour (Bandsintown dates + the DICE ticket link) =================
+   Dates come from Bandsintown (app id from Bandsintown for Artists).
+   A show with no ticket link on Bandsintown gets the DICE link.
+   If Bandsintown has nothing, the DICE card stays: ??? until DICE is live; on Wix the backend
+   (src/backend/dice.web.js) then fills it in through window.__slaterDice. */
+const BIT_APP_ID = 'e721847ab015b76737ca527e8759e900', BIT_ARTIST = 'id_527632';
 {
+  const list = document.getElementById('shows');
   const card = document.getElementById('diceShow');
-  const set = (k, v) => { const el = card.querySelector(`[data-dice="${k}"]`); if (el && v) el.textContent = v; };
+  const DICE_URL = document.getElementById('diceTix').href;
   const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const fill = ev => {
+  const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // read dates as written (the venue's local time), never shifted into the visitor's time zone
+  const parts = iso => {
+    const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(iso || ''); if (!m) return null;
+    const wk = new Date(Date.UTC(+m[1], +m[2]-1, +m[3])).toLocaleDateString('en-US', {weekday:'short', timeZone:'UTC'});
+    let time = '';
+    if (m[4] && m[4] + m[5] !== '0000') { const h = +m[4]; time = ` · ${(h % 12) || 12}${m[5] !== '00' ? ':'+m[5] : ''}${h < 12 ? 'am' : 'pm'}`; }
+    return { key: `${m[1]}-${m[2]}-${m[3]}`, day: `${M[+m[2]-1]} ${+m[3]}`, sub: `${wk} ${m[1]}${time}` };
+  };
+
+  // the DICE card (used only when Bandsintown has no dates)
+  const set = (k, v) => { const el = card.querySelector(`[data-dice="${k}"]`); if (el && v) el.textContent = v; };
+  const fillDice = ev => {
     if (!ev || !ev.live) return;
-    const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(ev.startDate || '');
-    if (m) {
-      // read the date as written (venue's local time), not converted to the visitor's time zone
-      const d = new Date(Date.UTC(+m[1], +m[2]-1, +m[3]));
-      const wk = d.toLocaleDateString('en-US', {weekday:'short', timeZone:'UTC'});
-      let time = '';
-      if (m[4]) { const h = +m[4]; time = ` · ${(h % 12) || 12}${m[5] !== '00' ? ':'+m[5] : ''}${h < 12 ? 'am' : 'pm'}`; }
-      set('day', `${M[+m[2]-1]} ${+m[3]}`);
-      set('sub', `${wk} ${m[1]}${time}`);
-    }
+    const d = parts(ev.startDate); if (d) { set('day', d.day); set('sub', d.sub); }
     set('place', [ev.city, ev.region].filter(Boolean).join(', ') || ev.name);
     set('venue', ev.venue);
     card.classList.add('is-live');
   };
-  fill(window.__slaterDice);
-  addEventListener('slater:dice', e => fill(e.detail));
+  fillDice(window.__slaterDice);
+  addEventListener('slater:dice', e => fillDice(e.detail));
+
+  fetch(`https://rest.bandsintown.com/artists/${BIT_ARTIST}/events?app_id=${BIT_APP_ID}&date=upcoming`)
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(events => {
+      if (!Array.isArray(events) || !events.length) return;      // keep the DICE card
+      list.innerHTML = events.map(e => {
+        const d = parts(e.datetime) || {day:'', sub:''}, v = e.venue || {};
+        const place = v.location || [v.city, v.region || v.country].filter(Boolean).join(', ');
+        const offers = e.offers || [];
+        const tix = offers.find(o => /ticket/i.test(o.type) && o.status === 'available');
+        const soldOut = !tix && offers.some(o => /ticket/i.test(o.type));
+        const href = tix ? tix.url : DICE_URL;
+        return `<li class="show">
+          <p class="show__date disp"><b>${d.day}</b><span>${d.sub}</span></p>
+          <p class="show__where"><b class="disp">${esc(place)}</b><span>${esc(v.name)}</span></p>
+          <p class="show__cta">${soldOut ? `<span class="hl disp">Sold out</span>` : `<a class="btn disp" href="${esc(href)}" target="_blank" rel="noopener">Tickets</a>`}</p>
+        </li>`;
+      }).join('');
+    })
+    .catch(() => {});   // network trouble: the DICE card stays
 }
 
 /* ================= sign-up (our design, posts to Laylo) =================
