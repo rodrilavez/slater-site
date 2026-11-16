@@ -492,7 +492,7 @@ const LATEST = new Set(latestSet(ALL).map(i=>i.id));
 
 /* ================= countdown ================= */
 // Release: Nov 17, 2026, midnight Pacific (Orange County). Change here if the date moves.
-const RELEASE = new Date('2026-11-17T00:00:00-08:00');
+const RELEASE = new Date('2026-11-24T00:00:00-08:00');
 const units = {d:document.querySelector('[data-u=d]'),h:document.querySelector('[data-u=h]'),m:document.querySelector('[data-u=m]'),s:document.querySelector('[data-u=s]')};
 function tick(){
   let t = Math.max(0, RELEASE - Date.now())/1000;
