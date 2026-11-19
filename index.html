@@ -227,9 +227,9 @@ body::after{
 .pickup__spin img.l{filter:brightness(.42)}
 /* ================= pre-order: late-night TV shop ad ================= */
 .promo{--blue:#1626e6;--navy:#0a0f6b;--yel:#ffe23d;position:relative;overflow:hidden;isolation:isolate;color:#fff;
-  background:linear-gradient(180deg,#0d17b0 0%,var(--blue) 38%,#4a66ff 62%,#7d93ff 66%,#1c34e0 68%,#0a1384 90%)}
+  background:#0e2a44}
 .promo__crt{position:absolute;inset:0;z-index:4;pointer-events:none;
-  background:repeating-linear-gradient(0deg,rgba(0,0,30,.22) 0 1px,transparent 1px 3px),radial-gradient(130% 100% at 50% 50%,transparent 55%,rgba(0,0,40,.55) 100%);
+  background:repeating-linear-gradient(0deg,rgba(0,0,30,.12) 0 1px,transparent 1px 3px),radial-gradient(130% 100% at 50% 50%,transparent 60%,rgba(0,0,30,.45) 100%);
   animation:crt 4s steps(2) infinite}
 @keyframes crt{50%{opacity:.86}}
 .promo__ticker{position:relative;z-index:3;display:flex;overflow:hidden;background:var(--yel);color:var(--navy);text-decoration:none;
@@ -241,24 +241,15 @@ body::after{
   max-width:1200px;margin:0 auto;padding:clamp(2.5rem,8vh,5.5rem) var(--pad) clamp(3rem,9vh,6rem)}
 /* the CD, spinning in front of a sunburst */
 .promo__stage{position:relative;display:grid;place-items:center;aspect-ratio:1;width:min(100%,560px);justify-self:center;perspective:1100px;text-decoration:none}
-/* the ocean: a low sun on the horizon, glitter on the water, four rolling swells */
-.promo__sea{position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
-.promo__sun{position:absolute;left:var(--sx,45%);top:64%;width:min(36vw,420px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
-  background:radial-gradient(closest-side,#fff6c8 0 26%,#ffd84a 31%,rgba(255,200,60,.55) 33%,rgba(255,226,61,.22) 55%,rgba(255,226,61,0) 100%);
-  animation:sunset 5s ease-in-out infinite alternate}
-@keyframes sunset{to{transform:translate(-50%,-47%) scale(1.04)}}
-.promo__glitter{position:absolute;left:var(--sx,45%);top:64%;width:min(22vw,240px);height:30%;transform:translateX(-50%);z-index:1;
-  background:repeating-linear-gradient(180deg,rgba(255,240,170,.85) 0 2px,transparent 2px 11px);
-  -webkit-mask:radial-gradient(50% 100% at 50% 0,#000 0,transparent 100%);mask:radial-gradient(50% 100% at 50% 0,#000 0,transparent 100%);
-  animation:glitter 1.8s steps(3) infinite}
-@keyframes glitter{50%{opacity:.55;transform:translateX(-50%) scaleX(1.06)}}
-.promo__wave{position:absolute;left:0;width:calc(100% + var(--w));background-repeat:repeat-x;background-size:var(--w) 100%;animation:swell var(--t) linear infinite}
-.promo__wave.w1{top:63%;height:12%;--w:300px;--t:11s;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20300%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M0%2022%20C%2045.0%205.199999999999999%2C%20105.0%205.199999999999999%2C%20150.0%2022%20S%20255.0%2038.8%2C%20300%2022%20V%20100%20H%200%20Z%27%20fill%3D%27%233555ff%27/%3E%3Cpath%20d%3D%27M0%2022%20C%2045.0%205.199999999999999%2C%20105.0%205.199999999999999%2C%20150.0%2022%20S%20255.0%2038.8%2C%20300%2022%27%20fill%3D%27none%27%20stroke%3D%27rgba%28255%2C255%2C255%2C.6%29%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E")}
-.promo__wave.w2{top:69%;height:14%;--w:380px;--t:8.5s;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20380%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M0%2026%20C%2057.0%204.400000000000002%2C%20133.0%204.400000000000002%2C%20190.0%2026%20S%20323.0%2047.599999999999994%2C%20380%2026%20V%20100%20H%200%20Z%27%20fill%3D%27%231c34e0%27/%3E%3Cpath%20d%3D%27M0%2026%20C%2057.0%204.400000000000002%2C%20133.0%204.400000000000002%2C%20190.0%2026%20S%20323.0%2047.599999999999994%2C%20380%2026%27%20fill%3D%27none%27%20stroke%3D%27rgba%28255%2C255%2C255%2C.55%29%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");animation-direction:reverse}
-.promo__wave.w3{top:77%;height:15%;--w:460px;--t:7s;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20460%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M0%2030%20C%2069.0%203.6000000000000014%2C%20161.0%203.6000000000000014%2C%20230.0%2030%20S%20391.0%2056.4%2C%20460%2030%20V%20100%20H%200%20Z%27%20fill%3D%27%231020b4%27/%3E%3Cpath%20d%3D%27M0%2030%20C%2069.0%203.6000000000000014%2C%20161.0%203.6000000000000014%2C%20230.0%2030%20S%20391.0%2056.4%2C%20460%2030%27%20fill%3D%27none%27%20stroke%3D%27rgba%28255%2C255%2C255%2C.5%29%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E")}
-.promo__wave.w4{top:86%;height:15%;--w:540px;--t:5.5s;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20540%20100%27%20preserveAspectRatio%3D%27none%27%3E%3Cpath%20d%3D%27M0%2034%20C%2081.0%202.8000000000000007%2C%20189.0%202.8000000000000007%2C%20270.0%2034%20S%20459.0%2065.2%2C%20540%2034%20V%20100%20H%200%20Z%27%20fill%3D%27%230a1384%27/%3E%3Cpath%20d%3D%27M0%2034%20C%2081.0%202.8000000000000007%2C%20189.0%202.8000000000000007%2C%20270.0%2034%20S%20459.0%2065.2%2C%20540%2034%27%20fill%3D%27none%27%20stroke%3D%27rgba%28255%2C255%2C255%2C.45%29%27%20stroke-width%3D%274%27%20stroke-linecap%3D%27round%27/%3E%3C/svg%3E");animation-direction:reverse}
-@keyframes swell{to{transform:translateX(calc(-1 * var(--w)))}}
-.promo__glow{position:absolute;inset:16%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,235,.7),rgba(255,236,120,.35) 45%,rgba(255,226,61,0) 100%);
+/* the ocean: a real barrel wave breaking at Newport Beach (Unsplash, Jeremy Bishop) */
+.promo__sea{position:absolute;inset:0;z-index:1;pointer-events:none;background:#0e2a44 url("https://images.unsplash.com/photo-1498330177096-689e3fb901ca?auto=format&fit=crop&q=70&w=2000") 50% 62%/cover no-repeat;
+  animation:drift 22s ease-in-out infinite alternate;transform-origin:45% 60%}
+.promo__sea::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(6,18,40,.15) 0%,rgba(6,18,40,.2) 45%,rgba(6,18,40,.62) 75%,rgba(6,18,40,.7) 100%),linear-gradient(180deg,rgba(6,18,40,.35),rgba(6,18,40,0) 30%,rgba(6,18,40,0) 75%,rgba(6,18,40,.45))}
+@keyframes drift{from{transform:scale(1.04)}to{transform:scale(1.12) translateX(-1.5%)}}
+.promo__credit{position:absolute;z-index:5;right:var(--pad);bottom:.7rem;font-size:.66rem;color:rgba(255,255,255,.6);text-decoration:none}
+@media (hover:hover) and (pointer:fine){.promo__credit:hover{color:#fff;text-decoration:underline}}
+.promo__glow{position:absolute;inset:16%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,235,.45),rgba(255,236,120,.18) 45%,rgba(255,226,61,0) 100%);
   animation:pulse 2.4s ease-in-out infinite alternate}
 @keyframes pulse{to{opacity:.7;transform:scale(1.06)}}
 .promo__float{position:relative;width:74%;aspect-ratio:720/641;transform-style:preserve-3d;animation:bob 2.6s ease-in-out infinite alternate}
@@ -294,11 +285,9 @@ body::after{
   /* phones: headline, then the CD, then the button */
   .promo__inner{grid-template-columns:1fr;justify-items:center;text-align:center;padding-top:1.8rem;gap:0}
   .promo__copy{display:contents;text-align:center}
-  .promo{background:linear-gradient(180deg,#0d17b0 0%,var(--blue) 40%,#4a66ff 56%,#7d93ff 60%,#1c34e0 62%,#0a1384 88%)}
-  .promo__sun,.promo__glitter{top:57%;--sx:80%}
-  .promo__sun{width:62vw}
-  .promo__glitter{width:34vw}
-  .promo__wave.w1{top:56%}.promo__wave.w2{top:64%}.promo__wave.w3{top:74%}.promo__wave.w4{top:85%;height:16%}
+  .promo__sea{background-image:url("https://images.unsplash.com/photo-1498330177096-689e3fb901ca?auto=format&fit=crop&q=70&w=1100");background-position:42% 50%}
+  .promo__sea::after{background:linear-gradient(180deg,rgba(6,18,40,.62) 0%,rgba(6,18,40,.2) 30%,rgba(6,18,40,.15) 55%,rgba(6,18,40,.7) 80%,rgba(6,18,40,.8) 100%)}
+  .promo__credit{left:0;right:0;text-align:center;bottom:.5rem}
   .promo__title{font-size:clamp(2.2rem,11vw,3.4rem)}
   .promo__kicker{order:1}.promo__title{order:2}.promo__stage{order:3;margin:-.4rem 0 -.8rem}.promo__sub{order:4;margin-top:0}.promo__btn{order:5}.promo__blink{order:6}
   .promo__stage{width:min(88vw,420px)}
@@ -503,11 +492,7 @@ body::after{
   <a class="promo__ticker" href="https://lagoonroommerch.com/products/flowstate-interstate-cd-pre-order" target="_blank" rel="noopener" aria-label="Pre-order Flowstate Interstate on CD">
     <span>Pre-order now <i>♱</i> Flowstate Interstate on CD <i>♱</i> Order today <i>♱</i> Pre-order now <i>♱</i> Flowstate Interstate on CD <i>♱</i> Order today <i>♱</i>&nbsp;</span><span aria-hidden="true">Pre-order now <i>♱</i> Flowstate Interstate on CD <i>♱</i> Order today <i>♱</i> Pre-order now <i>♱</i> Flowstate Interstate on CD <i>♱</i> Order today <i>♱</i>&nbsp;</span>
   </a>
-  <div class="promo__sea" aria-hidden="true">
-    <span class="promo__sun"></span>
-    <span class="promo__glitter"></span>
-    <span class="promo__wave w1"></span><span class="promo__wave w2"></span><span class="promo__wave w3"></span><span class="promo__wave w4"></span>
-  </div>
+  <div class="promo__sea" aria-hidden="true"></div>
   <div class="promo__inner">
     <a class="promo__stage" href="https://lagoonroommerch.com/products/flowstate-interstate-cd-pre-order" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">
       <span class="promo__glow"></span>
@@ -526,6 +511,7 @@ body::after{
     </div>
   </div>
   <span class="promo__crt" aria-hidden="true"></span>
+  <a class="promo__credit" href="https://unsplash.com/photos/barrel-wave-in-newport-beach-iftBhUFfecE" target="_blank" rel="noopener">Newport Beach, photo by Jeremy Bishop / Unsplash</a>
 </section>
 
 <section class="records" id="records" aria-label="Discography">
