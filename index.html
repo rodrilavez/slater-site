@@ -101,6 +101,11 @@ body::after{
   opacity:0;animation:rise 1s .75s var(--ease-out) forwards}
 .drop__what{font-size:clamp(1.05rem,1.6vw,1.35rem);line-height:1.35}
 .drop__what .hl{display:inline-block;margin-top:.3rem}
+.out{font-weight:700;font-size:clamp(2.4rem,6vw,4.8rem);line-height:.9;color:var(--sand);text-decoration:none;white-space:nowrap;text-shadow:0 0 30px rgba(237,229,211,.25)}
+@media (hover:hover) and (pointer:fine){.out:hover{text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:.12em}}
+.stream{display:flex;gap:.6rem;flex-wrap:wrap}
+.stream .btn{gap:.5rem}
+.stream .btn svg{flex:none}
 .count{display:flex;gap:clamp(.9rem,2.2vw,2rem);font-variant-numeric:tabular-nums}
 .count div{display:flex;flex-direction:column}
 .count b{font-weight:700;font-size:clamp(2.4rem,6vw,4.8rem);line-height:.9}
@@ -403,7 +408,7 @@ body::after{
   .hero__mark,.drop,.stage__head,.now,.band,.foot{text-align:center}
   .hero__mark img{margin:0 auto}
   .drop{justify-items:center}
-  .count{justify-content:center}
+  .count,.stream{justify-content:center}
   .modes,.kinds{justify-content:center}
   .stage__head{left:var(--pad);right:var(--pad)}
   .now{left:var(--pad);right:var(--pad)}
@@ -477,14 +482,12 @@ body::after{
   <div class="hero__photo"><img src="assets/hero-beach.jpg" srcset="assets/hero-beach-1200.jpg 1200w, assets/hero-beach.jpg 2400w" sizes="100vw" alt="Slater on the beach by the pier at sunset, in a blue hoodie" fetchpriority="high"></div>
   <h1 class="hero__mark"><img src="assets/slater-scratch.png" alt="Slater" width="607" height="107"></h1>
   <div class="drop">
-    <p class="drop__what disp">The new album <span class="x" aria-hidden="true">♱</span><br><span class="hl">November 24</span></p>
-    <div class="count disp" id="count" role="timer" aria-label="Time until the new album">
-      <div><b data-u="d">00</b><small>days</small></div>
-      <div><b data-u="h">00</b><small>hours</small></div>
-      <div><b data-u="m">00</b><small>min</small></div>
-      <div><b data-u="s">00</b><small>sec</small></div>
+    <p class="drop__what disp">The new album <span class="x" aria-hidden="true">♱</span><br><span class="hl">Flowstate Interstate</span></p>
+    <a class="out disp" href="https://open.spotify.com/album/5iZzD4MYGj2tpuH1zbQWC7" target="_blank" rel="noopener">Out now</a>
+    <div class="stream" aria-label="Listen to Flowstate Interstate">
+      <a class="btn disp" href="https://open.spotify.com/album/5iZzD4MYGj2tpuH1zbQWC7" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="10.5" fill="currentColor"/><path d="M6.8 9.3c3.7-1.1 7.6-.8 10.6.9M7.4 12.4c3.1-.9 6.3-.6 8.8.8M8 15.3c2.5-.7 4.9-.5 6.9.6" fill="none" stroke="var(--sand)" stroke-width="1.6" stroke-linecap="round"/></svg>Spotify</a>
+      <a class="btn btn--ghost disp" href="https://music.apple.com/us/album/flowstate-interstate/6835817341" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M19 3.2v11.6a3.1 3.1 0 1 1-2-2.9V7.4l-8 1.8v7.9a3.1 3.1 0 1 1-2-2.9V5.6c0-.5.3-.9.8-1l10-2.2c.6-.1 1.2.3 1.2.8z"/></svg>Apple Music</a>
     </div>
-    <a class="btn disp" data-laylo href="https://laylo.com/slatervv" target="_blank" rel="noopener">Get notified on release</a>
   </div>
 </header>
 
@@ -640,6 +643,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* ================= catalog (Apple Music, Nov 2026), newest first ================= */
 const RAW = [
+[6835817341,"Flowstate Interstate","2026-11-24",10,"Music211/v4/30/6c/95/306c9535-d7e5-4e26-f8f4-fc87809aa152"],
 [6826082848,"Frozen in the Past - Single","2026-10-27",1,"Music221/v4/bd/41/5b/bd415b1b-d9d8-7cdd-4210-99a4f2105d81"],
 [6808647287,"I Tried to Make You Fly - Single","2026-09-15",1,"Music221/v4/b2/b9/8e/b2b98e1a-0961-cfaf-eb39-d1232fcea8d9"],
 [1819352937,"ESI 2","2025-06-24",10,"Music221/v4/2b/c6/9f/2bc69f4d-4949-2ca9-cb9c-3b910314115c"],
@@ -676,6 +680,7 @@ const RAW = [
 [1383510025,"Ghostie (feat. Kypha) - Single","2018-05-10",1,"Music114/v4/15/1d/ba/151dba54-e634-113c-7ac0-b8a64d2f32a0"],
 [1329510042,"23","2017-12-24",10,"Music118/v4/af/ac/4c/afac4cdc-0d1d-34b7-7b7d-7fbb21e2abc0"],
 ];
+const SPOTIFY = { 6835817341: 'https://open.spotify.com/album/5iZzD4MYGj2tpuH1zbQWC7' };   // direct album links where we have them
 const ALL = RAW.map(([id,name,date,tracks,art])=>{
   const kind = / - EP$/.test(name) ? 'EP' : / - Single$/.test(name) ? 'Single' : 'Album';
   return { id, kind, tracks, date, year:+date.slice(0,4), title:name.replace(/ - (EP|Single)$/,''),
@@ -694,18 +699,7 @@ function latestSet(items){
 }
 const LATEST = new Set(latestSet(ALL).map(i=>i.id));
 
-/* ================= countdown ================= */
-// Release: Nov 17, 2026, midnight Pacific (Orange County). Change here if the date moves.
-const RELEASE = new Date('2026-11-24T00:00:00-08:00');
-const units = {d:document.querySelector('[data-u=d]'),h:document.querySelector('[data-u=h]'),m:document.querySelector('[data-u=m]'),s:document.querySelector('[data-u=s]')};
-function tick(){
-  let t = Math.max(0, RELEASE - Date.now())/1000;
-  if (t<=0){ document.querySelector('.drop__what').innerHTML='The new album <span class="x" aria-hidden="true">♱</span><br><span class="hl">Out now</span>'; document.getElementById('count').hidden=true; return; }
-  const d=Math.floor(t/86400); t-=d*86400; const h=Math.floor(t/3600); t-=h*3600; const m=Math.floor(t/60); const s=Math.floor(t-m*60);
-  units.d.textContent=String(d).padStart(2,'0'); units.h.textContent=String(h).padStart(2,'0');
-  units.m.textContent=String(m).padStart(2,'0'); units.s.textContent=String(s).padStart(2,'0');
-}
-tick(); setInterval(tick,1000);
+/* ================= release: Flowstate Interstate is out (Nov 24, 2026) — the countdown was here ================= */
 
 const nav=document.getElementById('nav');
 addEventListener('scroll',()=>nav.classList.toggle('solid', scrollY > innerHeight*.6),{passive:true});
@@ -1197,7 +1191,7 @@ function openRecord(idx){
   $('sKind').textContent = `${it.kind}, ${new Date(it.date+'T12:00:00').toLocaleDateString('en-US',{month:'short',year:'numeric'})}, ${it.tracks} ${it.tracks===1?'track':'tracks'}`;
   $('sTitle').textContent = it.title;
   $('sApple').href = it.url;
-  $('sSpotify').href = `https://open.spotify.com/search/${encodeURIComponent('Slater '+it.title)}`;
+  $('sSpotify').href = SPOTIFY[it.id] || `https://open.spotify.com/search/${encodeURIComponent('Slater '+it.title)}`;
   $('prev').disabled = r.slot===0; $('next').disabled = r.slot===list.length-1;
   sheet.classList.add('open'); sheet.setAttribute('aria-hidden','false');
   canvas.style.cursor='default';
